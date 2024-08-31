@@ -5,7 +5,7 @@ import { AppModuleProviders } from './utils/app-module/app-module-providers';
 import { AppController } from './app.controller';
 
 @Module({
-  controllers:[AppController],
+  controllers: [AppController],
   imports: [...AppModuleImports, DatabaseModule],
   providers: AppModuleProviders,
 })

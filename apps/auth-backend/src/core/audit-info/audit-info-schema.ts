@@ -1,5 +1,5 @@
-import { Schema } from "mongoose";
-import { IAuditInfo } from "./audit-info";
+import { Schema } from 'mongoose';
+import { IAuditInfo } from './audit-info';
 
 export const auditSchema = new Schema<IAuditInfo>(
   {

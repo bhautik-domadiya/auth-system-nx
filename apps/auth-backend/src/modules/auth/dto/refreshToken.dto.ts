@@ -1,8 +1,5 @@
-import { ApiProperty } from "@nestjs/swagger";
-import {
-  IsNotEmpty,
-  IsString,
-} from "class-validator";
+import { ApiProperty } from '@nestjs/swagger';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class RefreshTokenDto {
   @ApiProperty({ type: String })
@@ -13,8 +10,8 @@ export class RefreshTokenDto {
 
 export class RefreshTokenDisplayModel {
   @ApiProperty()
-  public access_token:string
+  public access_token: string;
 
   @ApiProperty()
-  public refresh_token:string
+  public refresh_token: string;
 }

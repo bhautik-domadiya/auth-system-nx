@@ -16,7 +16,7 @@ export interface ISecretEnv {
     accessTokenSecret: string;
     refreshTokenSecret: string;
     accessTokenExpiry: string;
-    refreshTokenExpiry:string
-    cryptoSalt:string;
+    refreshTokenExpiry: string;
+    cryptoSalt: string;
   };
 }

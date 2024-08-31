@@ -1,7 +1,6 @@
-import mongoose, { Document, Schema, SoftDeleteDocument } from 'mongoose';
+import mongoose, { Schema, SoftDeleteDocument } from 'mongoose';
 
 import * as bcrypt from 'bcryptjs';
-import * as jwt from 'jsonwebtoken';
 import { MongoIdType } from '../../utils/types/core';
 import { IAuditInfo } from '../../core/audit-info/audit-info';
 import { auditSchema } from '../../core/audit-info/audit-info-schema';
@@ -54,7 +53,6 @@ userSchema.pre('save', async function (next) {
 userSchema.methods.isPasswordCorrect = async function (password: string) {
   return await bcrypt.compare(password, this.password);
 };
-
 
 userSchema.methods.hashPassword = async function () {
   // generating salt before hashing to prevent from same password resulting in same hash issue

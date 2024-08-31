@@ -9,7 +9,10 @@ import { CryptoService } from '../../utils/helpers/crypto.provider';
 import { JwtService } from '@nestjs/jwt';
 
 @Module({
-  imports: [LoggerModule,MongooseModule.forFeature([{ name: User.modelName, schema: userSchema }])],
+  imports: [
+    LoggerModule,
+    MongooseModule.forFeature([{ name: User.modelName, schema: userSchema }]),
+  ],
   controllers: [AuthController],
   providers: [
     // Service
@@ -17,8 +20,7 @@ import { JwtService } from '@nestjs/jwt';
     CryptoService,
     JwtService,
     // Other
-    TokenProvider
+    TokenProvider,
   ],
 })
-
 export class AuthModule {}

@@ -29,13 +29,13 @@ async function bootstrap() {
 
     logger.log(
       `Application is started: ${env.app.host}:${env.app.port} -- Swagger IS Started: ${env.app.host}:${env.app.port}${env.swagger.route}`,
-      "bootstrap"
+      'bootstrap'
     );
   } catch (error) {
     logger.error(
       `Application is crashed: ${error.message}`,
       error.stack,
-      'bootstrap',
+      'bootstrap'
     );
   }
 }

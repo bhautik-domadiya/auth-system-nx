@@ -1,4 +1,3 @@
-
 import { IUser, User } from 'apps/auth-backend/src/database/models/user.model';
 import { UserDisplayModel } from '../dto/user-display-model';
 import { RegisterPostDto } from '../../auth/dto/register-post.dto';
