@@ -1,22 +1,43 @@
-/**
- * This is not a production server yet!
- * This is only a minimal backend to get started.
- */
-
-import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-
-import { AppModule } from './app/app.module';
+import { AppModule } from './app.module';
+import { WinstonLogger } from './utils/logger/WinstonLogger';
+import { ValidationPipe, VersioningType } from '@nestjs/common';
+import { swaggerLoader } from './utils/swagger';
+import { env } from './env';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  const globalPrefix = 'api';
-  app.setGlobalPrefix(globalPrefix);
-  const port = process.env.PORT || 3000;
-  await app.listen(port);
-  Logger.log(
-    `🚀 Application is running on: http://localhost:${port}/${globalPrefix}`
-  );
+  const logger = new WinstonLogger();
+  try {
+    const app = await NestFactory.create(AppModule);
+
+    // Cors
+    app.enableCors();
+
+    // Version
+    app.enableVersioning({
+      type: VersioningType.HEADER,
+      header: 'Version',
+    });
+
+    // Global Validation
+    app.useGlobalPipes(new ValidationPipe());
+
+    //Swagger
+    env.swagger.enabled && swaggerLoader(app);
+
+    await app.listen(3000);
+
+    logger.log(
+      `Application is started: ${env.app.host}:${env.app.port} -- Swagger IS Started: ${env.app.host}:${env.app.port}${env.swagger.route}`,
+      "bootstrap"
+    );
+  } catch (error) {
+    logger.error(
+      `Application is crashed: ${error.message}`,
+      error.stack,
+      'bootstrap',
+    );
+  }
 }
 
 bootstrap();
