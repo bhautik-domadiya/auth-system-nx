@@ -10,14 +10,17 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { combineLatest } from 'rxjs';
-import { StorageService } from '../../store/storageService';
-import { Router } from '@angular/router';
-// import { AuthService } from '../../guard/auth.service';
-import { IUser } from '../../component/header/header.utils';
+import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../store/auth.service';
+import { IAuthLoginPayload } from '../../store/auth.inerface';
+import { take } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
-// import { AuthFacade } from '../store/auth.facade';
+interface IAuthLoginForm {
+  email: FormControl<string>;
+  password: FormControl<string>;
+}
 
 @Component({
   selector: 'aa-login',
@@ -30,43 +33,49 @@ import { AuthService } from '../../store/auth.service';
     MatFormFieldModule,
     MatInputModule,
     ReactiveFormsModule,
+    RouterModule,
+    MatSnackBarModule,
   ],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
 })
 export class LoginComponent {
-  constructor(
-    private storageService: StorageService,
-    private router: Router,
-    private authService: AuthService
-  ) {}
+  private _snackBar = inject(MatSnackBar);
 
-  readonly loginForm = new FormGroup({
-    username: new FormControl('', {
-      validators: [Validators.required],
+  constructor(private router: Router, private authService: AuthService) {}
+
+  readonly loginForm = new FormGroup<IAuthLoginForm>({
+    email: new FormControl('test@gmail.com', {
+      validators: [
+        Validators.required,
+        Validators.pattern('[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+.[A-Za-z]{2,}'),
+      ],
       nonNullable: true,
     }),
-    password: new FormControl('', {
-      validators: [Validators.required],
+    password: new FormControl('12345678', {
+      validators: [Validators.required, Validators.minLength(8)],
       nonNullable: true,
     }),
   });
 
-  // readonly vm$ = combineLatest({
-  //   isLoading: this.authFacade.isLoadingLogin$,
-  //   showLoginError: this.authFacade.hasLoginError$,
-  // });
-
   submit() {
-    const { username, password } = this.loginForm.value;
-    this.router.navigate(['/home']);
-    if (username) {
-      const payload: IUser = {
-        name: username,
-        lastName: username,
-      };
-      this.authService.login(payload);
-      this.storageService.setObject('userDetails', payload);
+    const { email, password } = this.loginForm.value;
+    if (email && password) {
+      const payload: IAuthLoginPayload = { email, password };
+      this.authService
+        .login(payload)
+        .pipe(take(1))
+        .subscribe({
+          next: (user) => {
+            if (user) {
+              this.router.navigate(['/home']);
+            }
+          },
+          error: (error: HttpErrorResponse) => {
+            const message = error?.error?.message || 'something went wrong';
+            this._snackBar.open(message);
+          },
+        });
     }
   }
 }

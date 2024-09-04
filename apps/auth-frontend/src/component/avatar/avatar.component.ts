@@ -3,14 +3,12 @@ import { Component, Input } from '@angular/core';
 @Component({
   selector: 'aa-avatar',
   standalone: true,
-  template: `
-    {{ computedText }}
-  `,
+  template: ` {{ computedText }} `,
   styleUrl: './avatar.component.scss',
 })
 export class AvatarComponent {
   @Input({ required: true })
-  text: string = '';
+  text = '';
 
   get computedText(): string {
     if (!this.text) return '';

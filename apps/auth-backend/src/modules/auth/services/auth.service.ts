@@ -134,8 +134,6 @@ export class AuthService {
         refresh_token: await this.tokenProvider.createRefreshToken(payload),
       };
     } catch (error) {
-      console.log(error);
-
       return this.BaseError.updateError(
         AuthErrorCodeEnum.ErrorGetAccessToken,
         `There was an error in get accessToken by RefreshToken`,

@@ -5,18 +5,23 @@ export interface MenuItem {
   icon: IconProp;
 }
 
+export interface IAuditInfo {
+  deletedAt: any;
+  deletedBy: any;
+  createdBy: string;
+  createdAt: number;
+  updatedAt: number;
+  updatedBy: string;
+}
+
 export interface IUser {
-  name: string;
+  _id: string;
+  firstName: string;
   lastName: string;
+  email: string;
+  auditInfo: IAuditInfo;
 }
 
 export const menuItems: MenuItem[] = [
   { link: '/home', label: 'Home', icon: 'home' },
-  //   { link: '/about', label: 'About', icon: 'info-circle' },
-  //   { link: '/secured-feat', label: 'Secured Feature', icon: 'lock' },
 ];
-
-export const authUserDemo = {
-  firstName: 'Admin',
-  lastName: 'Test',
-};

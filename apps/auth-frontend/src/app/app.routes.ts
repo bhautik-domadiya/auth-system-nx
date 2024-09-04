@@ -12,6 +12,8 @@ const routes: Routes = [
     path: 'login',
     loadComponent: () =>
       import('../pages/login/login.component').then((m) => m.LoginComponent),
+    canActivate: [AuthGuard],
+    data: { isNoAuth: true },
   },
   {
     path: 'signup',
@@ -19,6 +21,8 @@ const routes: Routes = [
       import('../pages/register/signup.component').then(
         (m) => m.SignupComponent
       ),
+    canActivate: [AuthGuard],
+    data: { isNoAuth: true },
   },
   {
     path: 'home',

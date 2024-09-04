@@ -1,6 +1,12 @@
 // auth.reducer.ts
 import { Action, createReducer, on } from '@ngrx/store';
-import { login, logout } from './auth.actions';
+import {
+  loadData,
+  loginAction,
+  logoutAction,
+  restoreSessionAction,
+  signupAction,
+} from './auth.actions';
 import { IUser } from '../component/header/header.utils';
 
 export interface AuthState {
@@ -17,8 +23,16 @@ export const initialState: AuthState = {
 
 const _authReducer = createReducer(
   initialState,
-  on(login, (state, { user }) => ({ ...state, user })),
-  on(logout, (state) => ({ ...state, user: null }))
+  on(loadData, (state) => {
+    return {
+      ...state,
+      loading: true,
+    };
+  }),
+  on(loginAction, (state, { user }) => ({ ...state, user: user })),
+  on(signupAction, (state, { user }) => ({ ...state, user: user })),
+  on(restoreSessionAction, (state, { user }) => ({ ...state, user: user })),
+  on(logoutAction, (state) => ({ ...state, user: null }))
 );
 
 export function authReducer(state: AuthState | undefined, action: Action) {

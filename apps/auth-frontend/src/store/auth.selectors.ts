@@ -5,6 +5,5 @@ import { AppState } from './auth.reducer'; // Ensure the import path is correct
 export const selectAuthState = (state: AppState) => state.auth;
 
 export const selectUser = createSelector(selectAuthState, (authState) => {
-  console.log('authState', authState);
   return authState.user;
 });

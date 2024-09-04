@@ -2,8 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { IUser, MenuItem, menuItems } from './header.utils';
-import { AuthService } from '../../guard/auth.service';
-
+import { AuthService } from '../../store/auth.service';
 @Component({
   selector: 'aa-header',
   templateUrl: './header.component.html',

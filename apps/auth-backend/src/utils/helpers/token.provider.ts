@@ -34,7 +34,6 @@ export class TokenProvider implements ITokenProvider {
 
   public async createRefreshToken(payload: JwtPayload): Promise<string> {
     const encryptedSub = this.cryptoService.encrypt(payload.sub.toString());
-    console.log("Sub",payload);
     
     payload.sub = JSON.stringify(encryptedSub);
 
@@ -53,7 +52,6 @@ export class TokenProvider implements ITokenProvider {
     if (!payload) {
       throw new ErrorInvalidUserToken();
     }
-console.log("Payload",payload);
 
     let subPayload = JSON.parse(payload.sub);
   
@@ -61,7 +59,6 @@ console.log("Payload",payload);
     const refreshPayload = {
       sub: this.cryptoService.decrypt(subPayload),
     };
-    console.log('Final =>', refreshPayload);
 
     this.logger.info(`Auth:  | verifying refresh token successfully .`);
     return refreshPayload;

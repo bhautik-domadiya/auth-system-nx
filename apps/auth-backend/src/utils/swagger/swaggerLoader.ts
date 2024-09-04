@@ -9,7 +9,7 @@ export const swaggerLoader = function (app: INestApplication): void {
 
 
   const options = new DocumentBuilder()
-    .setTitle("Creative Academy")
+    .setTitle("Auth")
     .setDescription("Documentation")
     .setVersion("1.0")
     .addBearerAuth()

@@ -1,10 +1,9 @@
+import { ErrorUnauthorizedUser } from '../auth/errors/error-unauthorized-user';
+import { Injectable } from '@nestjs/common';
 
-import { ErrorUnauthorizedUser } from "../auth/errors/error-unauthorized-user";
-import { Injectable } from "@nestjs/common";
-
-import { randomBytes, createCipheriv, createDecipheriv } from "node:crypto";
-import { env } from "../../env";
-import { WinstonLogger } from "../logger/WinstonLogger";
+import { randomBytes, createCipheriv, createDecipheriv } from 'node:crypto';
+import { env } from '../../env';
+import { WinstonLogger } from '../logger/WinstonLogger';
 
 @Injectable()
 export class CryptoService {
@@ -12,14 +11,14 @@ export class CryptoService {
 
   public encrypt(data: string) {
     try {
-      const algorithm = "aes-256-cbc";
+      const algorithm = 'aes-256-cbc';
       const iv = randomBytes(16);
       const cipher = createCipheriv(algorithm, env.jwtSecret.cryptoSalt, iv);
       const encryptedData =
-        cipher.update(data, "utf8", "base64") + cipher.final("base64");
+        cipher.update(data, 'utf8', 'base64') + cipher.final('base64');
       return {
         data: encryptedData,
-        iv: iv.toString("hex")
+        iv: iv.toString('hex'),
       };
     } catch (error) {
       this.logger.error(
@@ -32,25 +31,23 @@ export class CryptoService {
 
   public decrypt(encryptedData: { data: string; iv: string }) {
     try {
-      console.log("encryptedData",encryptedData);
-      
-      const algorithm = "aes-256-cbc";
-      const iv = Buffer.from(encryptedData.iv, "hex");
+      const algorithm = 'aes-256-cbc';
+      const iv = Buffer.from(encryptedData.iv, 'hex');
       const decipher = createDecipheriv(
         algorithm,
         env.jwtSecret.cryptoSalt,
         iv
       );
       const decryptedData =
-        decipher.update(encryptedData.data, "base64", "utf8") +
-        decipher.final("utf8");
+        decipher.update(encryptedData.data, 'base64', 'utf8') +
+        decipher.final('utf8');
       return decryptedData;
     } catch (error) {
       this.logger.error(
         ` Auth: | Error in executing Decrypt payload with crypto.\n Message : ${error.message}`,
         error.stack
       );
-      throw new ErrorUnauthorizedUser(error)
+      throw new ErrorUnauthorizedUser(error);
     }
   }
 }
