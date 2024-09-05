@@ -47,7 +47,6 @@ export class AuthService {
       const isUserExist = await this.userModel.findOne({
         email: register.email,
       });
-      console.log("=>",isUserExist)
       if (isUserExist) {
         return this.BaseError.updateError(
           AuthErrorCodeEnum.ErrorAuthUserAlreadyExists,

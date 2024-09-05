@@ -54,7 +54,6 @@ export class TokenProvider implements ITokenProvider {
     if (!payload) {
       throw new ErrorInvalidUserToken();
     }
-    // console.log(payload)
 
     const subPayload = JSON.parse(payload.sub)
     const refreshPayload = {

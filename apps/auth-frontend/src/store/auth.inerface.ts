@@ -12,8 +12,11 @@ export interface IAuthLoginPayload {
   password: string;
 }
 
-export interface IAuthResponse {
+export interface IAuthTokens {
   access_token: string;
   refresh_token: string;
+}
+
+export interface IAuthResponse extends IAuthTokens {
   user: IUser;
 }

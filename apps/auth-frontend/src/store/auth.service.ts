@@ -16,9 +16,11 @@ import {
   IAuthLoginPayload,
   IAuthResponse,
   IAuthSignupPayload,
+  IAuthTokens,
 } from './auth.inerface';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../environments/environment';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
@@ -31,7 +33,8 @@ export class AuthService {
   constructor(
     private store: Store<AppState>,
     private storageService: StorageService,
-    private http: HttpClient
+    private http: HttpClient,
+    private router: Router
   ) {
     this.user$ = this.store.select(selectUser);
     this.loadUser();
@@ -66,16 +69,37 @@ export class AuthService {
     );
   }
 
+  public refreshToken(refreshToken: string) {
+    return this.http.post<IAuthTokens>(`${this.apiRoute}/refresh`, {
+      refreshToken: refreshToken
+    }).pipe(
+      map((data) => {
+        this.setAuthTokensStorageData(data.access_token, data.refresh_token);
+        return data;
+      })
+    );
+  }
+
   setLocalStorageData(data: IAuthResponse) {
     this.storageService.setObject('userDetails', data.user);
+    this.setAuthTokensStorageData(data.access_token, data.refresh_token);
+  }
+
+  setAuthTokensStorageData(accessToken: string, refreshToken: string) {
     this.storageService.setObject('auth', {
-      access_token: data.access_token,
-      refresh_token: data.refresh_token,
+      access_token: accessToken,
+      refresh_token: refreshToken,
     });
+  }
+
+  getTokens(){
+    return this.storageService.getObject('auth') as IAuthTokens | null;
   }
 
   public logout(): void {
     this.storageService.clear();
     this.store.dispatch(logoutAction());
+    this.router.navigate(['/login']);
   }
+  
 }

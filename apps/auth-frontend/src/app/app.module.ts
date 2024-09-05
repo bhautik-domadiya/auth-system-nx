@@ -11,7 +11,8 @@ import { StoreRouterConnectingModule } from '@ngrx/router-store';
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from '../../src/environments/environment';
-import { provideHttpClient } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { TokenInterceptor } from './services/token.interceptors';
 @NgModule({
   declarations: [AppComponent],
   imports: [
@@ -40,6 +41,12 @@ import { provideHttpClient } from '@angular/common/http';
       : StoreDevtoolsModule.instrument({ name: 'Angular Authentication' }),
   ],
   bootstrap: [AppComponent],
-  providers: [provideHttpClient()],
+  providers: [provideHttpClient(withInterceptorsFromDi()), 
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: TokenInterceptor,
+      multi: true
+    }
+  ],
 })
 export class AppModule {}
