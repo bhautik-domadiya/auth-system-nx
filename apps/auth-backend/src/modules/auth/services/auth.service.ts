@@ -1,15 +1,15 @@
 import { RegisterPostDto } from '../dto/register-post.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-
 import { AuthMapper } from '../mappers/auth-mappers';
 import { BaseError } from 'apps/auth-backend/src/utils/errors/base-error';
-import { IUser, User } from 'apps/auth-backend/src/database/models/user.model';
+import { User } from 'apps/auth-backend/src/database/models/user.model';
 import { WinstonLogger } from 'apps/auth-backend/src/utils/logger/WinstonLogger';
 import { ErrorCategories } from 'apps/auth-backend/src/utils/errors/error-categories';
 import { LoginPostDto } from '../dto/login-post.dto';
 import { RefreshTokenDto } from '../dto/refreshToken.dto';
 import { TokenProvider } from 'apps/auth-backend/src/utils/helpers/token.provider';
+import * as bcrypt from 'bcrypt';
 
 export enum AuthErrorCodeEnum {
   ErrorAuthForbidden = 'ERR_AUTH_FORBIDDEN',
@@ -30,7 +30,7 @@ export interface AuthTokensInterface {
 export class AuthService {
   BaseError: BaseError;
   constructor(
-    @InjectModel(User.modelName) private readonly userModel: Model<IUser>,
+    @InjectModel(User.name) private  userModel: Model<User>,
     private logger?: WinstonLogger,
     private tokenProvider?: TokenProvider
   ) {
@@ -47,14 +47,17 @@ export class AuthService {
       const isUserExist = await this.userModel.findOne({
         email: register.email,
       });
-
+      console.log("=>",isUserExist)
       if (isUserExist) {
         return this.BaseError.updateError(
           AuthErrorCodeEnum.ErrorAuthUserAlreadyExists,
           'User with this email already exists.'
         );
       }
-
+      //Hash Password 
+      const saltOrRounds = 10;
+      const hashPassword = await bcrypt.hash(register.password, saltOrRounds);
+      register.password = hashPassword
       const user = new this.userModel(register);
 
       await user.save();
@@ -93,9 +96,9 @@ export class AuthService {
           'Invalid Email or Password.'
         );
       }
-      const isValidPassword = await user.isPasswordCorrect(
-        loginPostDto.password
-      );
+
+      const isValidPassword = await bcrypt.compare(loginPostDto.password,user.password)
+      
       if (!isValidPassword) {
         return this.BaseError.updateError(
           AuthErrorCodeEnum.ErrorAuthPasswordNotMatch,

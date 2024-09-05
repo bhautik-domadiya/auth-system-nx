@@ -15,12 +15,9 @@ import { AuthService } from '../services/auth.service';
 import { AuthDisplayModel } from '../dto/auth-display-model';
 import { RegisterPostDto } from '../dto/register-post.dto';
 import { LoginPostDto } from '../dto/login-post.dto';
-import { BaseController } from 'apps/auth-backend/src/core/environment/api/base-controller';
-import {
-  RefreshTokenDisplayModel,
-  RefreshTokenDto,
-} from '../dto/refreshToken.dto';
+import { BaseController } from 'apps/auth-backend/src/core/environment/api/base-controller';;
 import { BaseError } from 'apps/auth-backend/src/utils/errors/base-error';
+import { RefreshTokenDisplayModel, RefreshTokenDto } from '../dto/refreshToken.dto';
 
 @ApiTags('Authentication')
 @ApiBearerAuth()

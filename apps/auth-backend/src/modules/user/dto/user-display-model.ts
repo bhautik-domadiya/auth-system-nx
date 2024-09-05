@@ -1,4 +1,4 @@
-import { IAuditInfo } from '../../../core/audit-info/audit-info';
+
 
 export class UserDisplayModel {
   _id: string;
@@ -11,5 +11,4 @@ export class UserDisplayModel {
 
   lastLogin: Date;
 
-  auditInfo: IAuditInfo;
 }

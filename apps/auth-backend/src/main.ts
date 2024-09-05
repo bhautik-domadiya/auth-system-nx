@@ -5,6 +5,7 @@ import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { swaggerLoader } from './utils/swagger';
 import { env } from './env';
 
+
 async function bootstrap() {
   const logger = new WinstonLogger();
   try {
@@ -28,7 +29,7 @@ async function bootstrap() {
     await app.listen(3000);
 
     logger.log(
-      `Application is started: ${env.app.host}:${env.app.port} -- Swagger IS Started: ${env.app.host}:${env.app.port}${env.swagger.route}`,
+      `Application is started: http://${env.app.host}:${env.app.port} -- Swagger IS Started: http://${env.app.host}:${env.app.port}${env.swagger.route}`,
       'bootstrap'
     );
   } catch (error) {

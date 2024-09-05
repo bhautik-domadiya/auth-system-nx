@@ -1,9 +1,10 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { CryptoService } from './crypto.provider';
-import { WinstonLogger } from '../logger/WinstonLogger';
-import { ErrorInvalidUserToken } from '../auth/errors/error-invalid-user-token';
-import { env } from '../../env';
+import { Injectable } from "@nestjs/common";
+import { JwtService } from "@nestjs/jwt";
+import { CryptoService } from "./crypto.provider";
+import { WinstonLogger } from "../logger/WinstonLogger";
+import { ErrorInvalidUserToken } from "../auth/errors/error-invalid-user-token";
+import { env } from "../../env";
+
 
 type JwtPayload = {
   sub: string | number;
@@ -20,47 +21,66 @@ export class TokenProvider implements ITokenProvider {
     private readonly jwtService: JwtService,
     private cryptoService: CryptoService,
     private readonly logger?: WinstonLogger
-  ) {}
+  ) { }
 
   public async createAccessToken(payload: JwtPayload): Promise<string> {
-    const encryptedSub = this.cryptoService.encrypt(payload.sub.toString());
-    payload.sub = JSON.stringify(encryptedSub);
+    const encryptedSub = this.cryptoService.encrypt(
+      payload.sub.toString()
+    );
 
-    return this.jwtService.signAsync(payload, {
+    const newPayload = JSON.stringify(encryptedSub);
+    return this.jwtService.signAsync({ sub: newPayload }, {
       secret: env.jwtSecret.accessTokenSecret,
-      expiresIn: env.jwtSecret.accessTokenExpiry,
+      expiresIn: env.jwtSecret.accessTokenExpiry
     });
   }
 
   public async createRefreshToken(payload: JwtPayload): Promise<string> {
-    const encryptedSub = this.cryptoService.encrypt(payload.sub.toString());
-    
-    payload.sub = JSON.stringify(encryptedSub);
-
-    return this.jwtService.signAsync(payload, {
-      secret: env.jwtSecret.refreshTokenSecret,
-      expiresIn: env.jwtSecret.refreshTokenExpiry,
+    const encryptedSub = this.cryptoService.encrypt(
+      payload.sub.toString()
+    );
+    const newPayload = JSON.stringify(encryptedSub);
+    return this.jwtService.signAsync({ sub: newPayload }, {
+      secret: env.jwtSecret.refreshTokenSecret
     });
   }
 
   public async decryptRefreshToken(refreshToken: string): Promise<JwtPayload> {
-    this.logger.info(`Auth:  | Executing verifying refresh token.`);
+
     const payload = await this.jwtService.verifyAsync(refreshToken, {
-      secret: env.jwtSecret.refreshTokenSecret,
+      secret: env.jwtSecret.refreshTokenSecret
+    });
+
+    if (!payload) {
+      throw new ErrorInvalidUserToken();
+    }
+    // console.log(payload)
+
+    const subPayload = JSON.parse(payload.sub)
+    const refreshPayload = {
+      sub: this.cryptoService.decrypt(subPayload)
+    };
+    return refreshPayload;
+  }
+  public async decryptAccessToken(accessToken: string): Promise<JwtPayload> {
+
+    const payload = await this.jwtService.verifyAsync(accessToken, {
+      secret: env.jwtSecret.accessTokenSecret
     });
 
     if (!payload) {
       throw new ErrorInvalidUserToken();
     }
 
-    let subPayload = JSON.parse(payload.sub);
-  
+    const subPayload = JSON.parse(payload.sub)
 
-    const refreshPayload = {
-      sub: this.cryptoService.decrypt(subPayload),
+    const accessPayload = {
+      sub: this.cryptoService.decrypt(subPayload)
     };
 
-    this.logger.info(`Auth:  | verifying refresh token successfully .`);
-    return refreshPayload;
+    return accessPayload;
   }
+
+
+
 }
